@@ -3,19 +3,107 @@
 
 #include "pch.h"
 #include <iostream>
+#include <stack>
+#include <string>
+#include <map>
+#include <functional>
+#include <cmath>
+#include <optional>
 
-int main()
+typedef double(*pfunc)(double);
+std::map<std::string, pfunc> functionMap;
+
+void initFuncMap()
 {
-    std::cout << "Hello World!\n"; 
+  functionMap["cos"] = cos;
+  functionMap["sin"] = sin;
+  functionMap["tan"] = tan;
+  functionMap["abs"] = fabs;
 }
 
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
+bool isOperator(const std::string& str)
+{
+  return (str[0] == '+' || str[0] == '-' || str[0] == '*' || str[0] == '/');
+}
 
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
+std::pair<bool,pfunc> isUnaryFunction(const std::string& str)
+{
+  auto it = functionMap.find(str);
+  if (it != functionMap.end())
+  {
+    std::pair<bool, pfunc> ret;
+    ret.first = true;
+    ret.second = it->second;
+    return std::make_pair(true, it->second);
+  }
+  else
+  {
+    return std::make_pair(false, nullptr);
+  }
+}
+
+int main(int argc,char* argv[])
+{
+  std::stack<double> st;
+  double op1, op2;
+  initFuncMap();
+
+  try
+  {
+    while (--argc)
+    {
+      ++argv;
+      std::string arg(*argv);
+      if (isOperator(arg))
+      {
+        switch (arg[0])
+        {
+        case '+':
+          op2 = st.top();
+          st.pop();
+          op1 = st.top();
+          st.pop();
+          st.push(op1 + op2);
+          break;
+        case '-':
+          op2 = st.top();
+          st.pop();
+          op1 = st.top();
+          st.pop();
+          st.push(op1 - op2);
+          break;
+        case '*':
+          op2 = st.top();
+          st.pop();
+          op1 = st.top();
+          st.pop();
+          st.push(op1 * op2);
+          break;
+        case '/':
+          op2 = st.top();
+          st.pop();
+          op1 = st.top();
+          st.pop();
+          st.push(op1 / op2);
+          break;
+        }
+      }
+      else if (auto[exists, p] = isUnaryFunction(arg); exists)
+      {
+        op1 = st.top();
+        st.pop();
+        st.push(p(op1));
+      }
+      else
+      {
+        st.push(std::stod(arg));
+      }
+    }
+
+    std::cout << st.top() << "\n";
+  }
+  catch (const std::exception& ex)
+  {
+    std::cerr << ex.what() << "\n";
+  }
+}
