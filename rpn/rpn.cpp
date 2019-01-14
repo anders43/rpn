@@ -13,12 +13,42 @@
 typedef double(*pfunc)(double);
 std::map<std::string, pfunc> functionMap;
 
+typedef void(*sfunc)(std::stack<double>& st);
+std::map<std::string, sfunc> stackFunctionMap;
+
 void initFuncMap()
 {
+  functionMap["acos"] = acos;
   functionMap["cos"] = cos;
+  functionMap["asin"] = asin;
   functionMap["sin"] = sin;
+  functionMap["atan"] = atan;
   functionMap["tan"] = tan;
   functionMap["abs"] = fabs;
+  functionMap["sqrt"] = sqrt;
+  functionMap["trunc"] = trunc;
+}
+
+void dup(std::stack<double>& st)
+{
+  auto op1 = st.top();
+  st.push(op1);
+}
+
+void swapStack(std::stack<double>& st)
+{
+  auto op1 = st.top();
+  st.pop();
+  auto op2 = st.top();
+  st.pop();
+  st.push(op1);
+  st.push(op2);
+}
+
+void initStackManipulationMap()
+{
+  stackFunctionMap["dup"] = dup;
+  stackFunctionMap["swap"] = swapStack;
 }
 
 bool isOperator(const std::string& str)
@@ -47,6 +77,7 @@ int main(int argc,char* argv[])
   std::stack<double> st;
   double op1, op2;
   initFuncMap();
+  initStackManipulationMap();
 
   try
   {
