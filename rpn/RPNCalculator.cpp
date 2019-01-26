@@ -20,7 +20,7 @@ bool RPNCalculator::isOperand(const std::string& str)
   }
   catch (const std::exception&)
   {
-    return false;
+    return false; // failed conversion
   }
   return true;
 }
@@ -91,46 +91,36 @@ std::optional < RPNCalculator::spfunc > RPNCalculator::isSFunction(const std::st
 
 void RPNCalculator::addition()
 {
-  auto op2 = st_.top();
-  st_.pop();
-  auto op1 = st_.top();
-  st_.pop();
+  auto op2 = pop();
+  auto op1 = pop();
   st_.push(op1 + op2);
 }
 
 void RPNCalculator::subtraction()
 {
-  auto op2 = st_.top();
-  st_.pop();
-  auto op1 = st_.top();
-  st_.pop();
+  auto op2 = pop();
+  auto op1 = pop();
   st_.push(op1 - op2);
 }
 
 void RPNCalculator::multiplication()
 {
-  auto op2 = st_.top();
-  st_.pop();
-  auto op1 = st_.top();
-  st_.pop();
+  auto op2 = pop();
+  auto op1 = pop();
   st_.push(op1 * op2);
 }
 
 void RPNCalculator::division()
 {
-  auto op2 = st_.top();
-  st_.pop();
-  auto op1 = st_.top();
-  st_.pop();
+  auto op2 = pop();
+  auto op1 = pop();
   st_.push(op1 / op2);
 }
 
 void RPNCalculator::modal()
 {
-  auto op2 = st_.top();
-  st_.pop();
-  auto op1 = st_.top();
-  st_.pop();
+  auto op2 = pop();
+  auto op1 = pop();
   st_.push(static_cast<double>(static_cast<int>(op1) % static_cast<int>(op2)));
 }
 
@@ -165,18 +155,16 @@ double fak(double value)
 
 void RPNCalculator::lsh()
 {
-  auto n = static_cast<int>(st_.top());
-  st_.pop();
-  auto op = static_cast<uint32_t>(st_.top());
+  auto n = static_cast<int>(pop());
+  auto op = static_cast<uint32_t>(pop());
   op <<= n;
   st_.push(static_cast<double>(op));
 }
 
 void RPNCalculator::rsh()
 {
-  auto n = static_cast<int>(st_.top());
-  st_.pop();
-  auto op = static_cast<uint32_t>(st_.top());
+  auto n = static_cast<int>(pop());
+  auto op = static_cast<uint32_t>(pop());
   op >>= n;
   st_.push(static_cast<double>(op));
 }
