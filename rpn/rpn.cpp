@@ -13,7 +13,8 @@ int main(int argc,char* argv[])
   
   if (argc==1)
   {
-    std::cerr << "Reverse Polish Notation Calculator\n";
+    std::cerr << "Reverse Polish Notation Calculator v1.0 - Anders Karlsson\n";
+    std::cout << rpn.show() << std::endl;
     return -1;
   }
   

@@ -33,6 +33,11 @@ public:
   double top();
   void lsh();
   void rsh();
+  void dup();
+  void rot();
+  void drop();
+  std::string  show();
+  
 private:
   void initFuncMap();
   void initFunc2Map();

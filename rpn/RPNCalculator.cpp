@@ -1,7 +1,8 @@
 #include "pch.h"
 #include <cmath>
+#include <string>
+#include <sstream>
 #include "RPNCalculator.h"
-
 
 RPNCalculator::RPNCalculator()
 {
@@ -178,6 +179,37 @@ void RPNCalculator::rsh()
   st_.push(static_cast<double>(op));
 }
 
+void RPNCalculator::dup()
+{
+  auto op = st_.top();
+  st_.push(op);
+}
+
+void RPNCalculator::rot()
+{
+  auto op1 = pop();
+  auto op2 = pop();
+  st_.push(op1);
+  st_.push(op2);
+}
+
+void RPNCalculator::drop()
+{
+  st_.pop();
+}
+
+std::string RPNCalculator::show()
+{
+  std::stringstream ss;
+  for (auto [f, p] : functionMap_)
+    ss << f << " ";
+  for (auto [f, p] : function2Map_)
+    ss << f << " ";
+  for (auto [f, p] : sfunctionMap_)
+    ss << f << " ";
+  return ss.str();
+}
+
 void RPNCalculator::initFuncMap()
 {
   functionMap_["acos"] = acos;
@@ -211,4 +243,7 @@ void RPNCalculator::initSFuncMap()
 {
   sfunctionMap_["lsh"] = &RPNCalculator::lsh;
   sfunctionMap_["rsh"] = &RPNCalculator::rsh;
+  sfunctionMap_["dup"] = &RPNCalculator::dup;
+  sfunctionMap_["drop"] = &RPNCalculator::drop;
+  sfunctionMap_["rot"] = &RPNCalculator::rot;
 }
