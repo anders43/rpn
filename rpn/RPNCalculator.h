@@ -16,15 +16,15 @@ public:
   typedef double(*p2func)(double, double);
   typedef void(RPNCalculator::*spfunc)(void);
 
-  bool isOperator(const std::string_view str);
+  bool isOperand(const std::string& str);
 
   std::pair<bool, pfunc> isUnaryFunction2(const std::string& str);
   std::optional<pfunc> isUnaryFunction(const std::string& str);
   std::optional<p2func> isFunction(const std::string& str);
   std::optional<spfunc> isSFunction(const std::string& str);
 
-  void plus();
-  void minus();
+  void addition();
+  void subtraction();
   void multiplication();
   void division();
   void modal();
@@ -47,6 +47,5 @@ private:
   std::map<std::string, p2func> function2Map_;
   std::map<std::string, spfunc> sfunctionMap_;
   std::stack<double> st_;
-  bool init_{ false };
 };
 

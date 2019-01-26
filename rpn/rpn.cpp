@@ -24,26 +24,9 @@ int main(int argc,char* argv[])
     {
       ++argv;
       std::string arg(*argv);
-      if (rpn.isOperator(arg))
+      if (rpn.isOperand(arg))
       {
-        switch (arg[0])
-        {
-        case '+':
-          rpn.plus();
-          break;
-        case '-':
-          rpn.minus();
-          break;
-        case '*':
-          rpn.multiplication();
-          break;
-        case '/':
-          rpn.division();
-          break;
-        case '%':
-          rpn.modal();
-          break;
-        }
+        continue;
       }
       else if (auto p = rpn.isUnaryFunction(arg))
       {
@@ -63,7 +46,7 @@ int main(int argc,char* argv[])
       }
       else
       {
-        rpn.push(std::stod(arg));
+        std::cerr << "Invalid argument\n";
       }
     }
 

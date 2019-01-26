@@ -11,16 +11,18 @@ RPNCalculator::RPNCalculator()
   initSFuncMap();
 }
 
-
-bool RPNCalculator::isOperator(const std::string_view str)
+bool RPNCalculator::isOperand(const std::string& str)
 {
-  // unary + -
-  if ((str[0] == '+' || str[0] == '-') && str.length()>1)
+  try
+  {
+    auto d = std::stod(str);
+    st_.push(d);
+  }
+  catch (const std::exception&)
   {
     return false;
   }
-  
-  return (str[0] == '+' || str[0] == '-' || str[0] == '*' || str[0] == '/' || str[0] == '%');
+  return true;
 }
 
 std::pair<bool, RPNCalculator::pfunc> RPNCalculator::isUnaryFunction2(const std::string& str)
@@ -87,7 +89,7 @@ std::optional < RPNCalculator::spfunc > RPNCalculator::isSFunction(const std::st
   }
 }
 
-void RPNCalculator::plus()
+void RPNCalculator::addition()
 {
   auto op2 = st_.top();
   st_.pop();
@@ -96,7 +98,7 @@ void RPNCalculator::plus()
   st_.push(op1 + op2);
 }
 
-void RPNCalculator::minus()
+void RPNCalculator::subtraction()
 {
   auto op2 = st_.top();
   st_.pop();
@@ -246,4 +248,9 @@ void RPNCalculator::initSFuncMap()
   sfunctionMap_["dup"] = &RPNCalculator::dup;
   sfunctionMap_["drop"] = &RPNCalculator::drop;
   sfunctionMap_["rot"] = &RPNCalculator::rot;
+  sfunctionMap_["+"] = &RPNCalculator::addition;
+  sfunctionMap_["-"] = &RPNCalculator::subtraction;
+  sfunctionMap_["*"] = &RPNCalculator::multiplication;
+  sfunctionMap_["/"] = &RPNCalculator::division;
+  sfunctionMap_["%"] = &RPNCalculator::modal;
 }
