@@ -55,6 +55,11 @@ int main(int argc,char* argv[])
         auto op2 = rpn.pop();
         rpn.push(p.value()(op2, op1));
       }
+      else if (auto p = rpn.isSFunction(arg))
+      {
+        auto f = p.value();
+        (rpn.*f)();
+      }
       else
       {
         rpn.push(std::stod(arg));

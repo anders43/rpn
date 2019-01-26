@@ -7,6 +7,7 @@ RPNCalculator::RPNCalculator()
 {
   initFuncMap();
   initFunc2Map();
+  initSFuncMap();
 }
 
 
@@ -21,7 +22,6 @@ bool RPNCalculator::isOperator(const std::string_view str)
   return (str[0] == '+' || str[0] == '-' || str[0] == '*' || str[0] == '/' || str[0] == '%');
 }
 
-//if (auto[exists, p] = rpn.isUnaryFunction(arg); exists) // if function exists, use pointer returned.
 std::pair<bool, RPNCalculator::pfunc> RPNCalculator::isUnaryFunction2(const std::string& str)
 {
   auto it = functionMap_.find(str);
@@ -63,6 +63,22 @@ std::optional<RPNCalculator::p2func> RPNCalculator::isFunction(const std::string
     ret.first = true;
     ret.second = it->second;
     return std::optional<p2func>(it->second);
+  }
+  else
+  {
+    return std::nullopt;
+  }
+}
+
+std::optional < RPNCalculator::spfunc > RPNCalculator::isSFunction(const std::string& str)
+{
+  auto it = sfunctionMap_.find(str);
+  if (it != sfunctionMap_.end())
+  {
+    std::pair<bool, spfunc> ret;
+    ret.first = true;
+    ret.second = it->second;
+    return std::optional<spfunc>(it->second);
   }
   else
   {
@@ -144,6 +160,24 @@ double fak(double value)
   return s;
 }
 
+void RPNCalculator::lsh()
+{
+  auto n = static_cast<int>(st_.top());
+  st_.pop();
+  auto op = static_cast<uint32_t>(st_.top());
+  op <<= n;
+  st_.push(static_cast<double>(op));
+}
+
+void RPNCalculator::rsh()
+{
+  auto n = static_cast<int>(st_.top());
+  st_.pop();
+  auto op = static_cast<uint32_t>(st_.top());
+  op >>= n;
+  st_.push(static_cast<double>(op));
+}
+
 void RPNCalculator::initFuncMap()
 {
   functionMap_["acos"] = acos;
@@ -171,4 +205,10 @@ void RPNCalculator::initFunc2Map()
   function2Map_["pow"] = pow;
   function2Map_["^"] = pow;
   function2Map_["remainder"] = remainder;
+}
+
+void RPNCalculator::initSFuncMap()
+{
+  sfunctionMap_["lsh"] = &RPNCalculator::lsh;
+  sfunctionMap_["rsh"] = &RPNCalculator::rsh;
 }
