@@ -8,7 +8,7 @@
 class RPNCalculator
 {
 public:
-  RPNCalculator();
+  RPNCalculator() noexcept;
   ~RPNCalculator() = default;;
 
 public:
@@ -31,6 +31,7 @@ public:
   void push(double value);
   double pop();
   double top();
+  void fak();
   void lsh();
   void rsh();
   void dup();

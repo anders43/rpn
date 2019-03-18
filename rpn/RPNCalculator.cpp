@@ -4,7 +4,7 @@
 #include <sstream>
 #include "RPNCalculator.h"
 
-RPNCalculator::RPNCalculator()
+RPNCalculator::RPNCalculator() noexcept
 {
   initFuncMap();
   initFunc2Map();
@@ -15,8 +15,7 @@ bool RPNCalculator::isOperand(const std::string& str)
 {
   try
   {
-    auto d = std::stod(str);
-    st_.push(d);
+    st_.push(std::stod(str));
   }
   catch (const std::exception&)
   {
@@ -91,36 +90,36 @@ std::optional < RPNCalculator::spfunc > RPNCalculator::isSFunction(const std::st
 
 void RPNCalculator::addition()
 {
-  auto op2 = pop();
-  auto op1 = pop();
+  const auto op2 = pop();
+  const auto op1 = pop();
   st_.push(op1 + op2);
 }
 
 void RPNCalculator::subtraction()
 {
-  auto op2 = pop();
-  auto op1 = pop();
+  const auto op2 = pop();
+  const auto op1 = pop();
   st_.push(op1 - op2);
 }
 
 void RPNCalculator::multiplication()
 {
-  auto op2 = pop();
-  auto op1 = pop();
+  const auto op2 = pop();
+  const auto op1 = pop();
   st_.push(op1 * op2);
 }
 
 void RPNCalculator::division()
 {
-  auto op2 = pop();
-  auto op1 = pop();
+  const auto op2 = pop();
+  const auto op1 = pop();
   st_.push(op1 / op2);
 }
 
 void RPNCalculator::modal()
 {
-  auto op2 = pop();
-  auto op1 = pop();
+  const auto op2 = pop();
+  const auto op1 = pop();
   st_.push(static_cast<double>(static_cast<int>(op1) % static_cast<int>(op2)));
 }
 
@@ -141,21 +140,22 @@ double RPNCalculator::top()
   return st_.top();
 }
 
-double fak(double value)
+void RPNCalculator::fak() 
 {
-  double s{ 1.0 };
-  double i = 2.0;
-  while (i <= value)
+  const auto top = static_cast<long long>(pop());
+  long long s{ 1 };
+  long long i = 2;
+  while (i <= top)
   {
     s *= i;
-    i += 1.0;
+    i += 1;
   }
-  return s;
+  push(static_cast<double>(s));
 }
 
 void RPNCalculator::lsh()
 {
-  auto n = static_cast<int>(pop());
+  const auto n = static_cast<int>(pop());
   auto op = static_cast<uint32_t>(pop());
   op <<= n;
   st_.push(static_cast<double>(op));
@@ -163,7 +163,7 @@ void RPNCalculator::lsh()
 
 void RPNCalculator::rsh()
 {
-  auto n = static_cast<int>(pop());
+  const auto n = static_cast<int>(pop());
   auto op = static_cast<uint32_t>(pop());
   op >>= n;
   st_.push(static_cast<double>(op));
@@ -177,8 +177,8 @@ void RPNCalculator::dup()
 
 void RPNCalculator::rot()
 {
-  auto op1 = pop();
-  auto op2 = pop();
+  const auto op1 = pop();
+  const auto op2 = pop();
   st_.push(op1);
   st_.push(op2);
 }
@@ -191,11 +191,11 @@ void RPNCalculator::drop()
 std::string RPNCalculator::show()
 {
   std::stringstream ss;
-  for (auto [f, p] : functionMap_)
+  for (auto&& [f, p] : functionMap_)
     ss << f << " ";
-  for (auto [f, p] : function2Map_)
+  for (auto&& [f, p] : function2Map_)
     ss << f << " ";
-  for (auto [f, p] : sfunctionMap_)
+  for (auto&& [f, p] : sfunctionMap_)
     ss << f << " ";
   return ss.str();
 }
@@ -216,7 +216,6 @@ void RPNCalculator::initFuncMap()
   functionMap_["log"] = log;
   functionMap_["log10"] = log10;
   functionMap_["round"] = round;
-  functionMap_["!"] = fak;
 }
 
 void RPNCalculator::initFunc2Map()
@@ -241,4 +240,5 @@ void RPNCalculator::initSFuncMap()
   sfunctionMap_["*"] = &RPNCalculator::multiplication;
   sfunctionMap_["/"] = &RPNCalculator::division;
   sfunctionMap_["%"] = &RPNCalculator::modal;
+  sfunctionMap_["!"] = &RPNCalculator::fak;
 }
