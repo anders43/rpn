@@ -130,13 +130,14 @@ void RPNCalculator::push(double value)
 
 double RPNCalculator::pop()
 {
-  auto op = st_.top();
+  const auto op = st_.top();
   st_.pop();
   return op;
 }
 
 double RPNCalculator::top()
 {
+  if (st_.empty()) return 0.0;
   return st_.top();
 }
 

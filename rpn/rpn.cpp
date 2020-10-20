@@ -7,55 +7,63 @@
 
 #include "RPNCalculator.h"
 
-int main(int argc,char* argv[])
+int main(int argc, char* argv[]) noexcept
 {
-  RPNCalculator rpn;
-  
-  if (argc==1)
-  {
-    std::cerr << "Reverse Polish Notation Calculator v1.0 - Anders Karlsson\n";
-    std::cout << rpn.show() << std::endl;
-    return -1;
-  }
-  
   try
   {
-    while (--argc)
+    RPNCalculator rpn;
+
+    if (argc == 1)
     {
-      ++argv;
-      std::string arg(*argv);
-      if (rpn.isOperand(arg))
-      {
-        continue;
-      }
-      else if (auto p = rpn.isUnaryFunction(arg))
-      {
-        auto op1 = rpn.pop();
-        rpn.push(p.value()(op1));
-      }
-      else if (auto p = rpn.isFunction(arg))
-      {
-        auto op1 = rpn.pop();
-        auto op2 = rpn.pop();
-        rpn.push(p.value()(op2, op1));
-      }
-      else if (auto p = rpn.isSFunction(arg))
-      {
-        auto f = p.value();
-        (rpn.*f)();
-      }
-      else
-      {
-        std::cerr << "Invalid argument\n";
-      }
+      fmt::print("Reverse Polish Notation Calculator {} - Anders Karlsson 2020-10-20\n", 
+        fmt::format(fg(fmt::color::yellow),"v1.1"));
+      std::cout << rpn.show() << std::endl;
+      return -1;
     }
 
-    std::cout << rpn.top() << "\n";
+    try
+    {
+      while (--argc)
+      {
+        ++argv;
+        std::string arg(*argv);
+        if (rpn.isOperand(arg))
+        {
+          continue;
+        }
+        else if (auto p1 = rpn.isUnaryFunction(arg))
+        {
+          const auto op1 = rpn.pop();
+          rpn.push(p1.value()(op1));
+        }
+        else if (auto p2 = rpn.isFunction(arg))
+        {
+          const auto op1 = rpn.pop();
+          const auto op2 = rpn.pop();
+          rpn.push(p2.value()(op2, op1));
+        }
+        else if (auto p3 = rpn.isSFunction(arg))
+        {
+          const auto f = p3.value();
+          (rpn.*f)();
+        }
+        else
+        {
+          fmt::print(fmt::fg(fmt::color::red) | fmt::emphasis::bold | fmt::emphasis::italic,
+            "Invalid argument\n");
+        }
+      }
+
+      fmt::print(fmt::fg(fmt::color::green), "{}\n", rpn.top());
+    }
+    catch (const std::exception& ex)
+    {
+      fmt::print(fmt::fg(fmt::color::red) | fmt::emphasis::bold | fmt::emphasis::italic, "{}\n", ex.what());
+    }
   }
   catch (const std::exception& ex)
   {
-    std::cerr << ex.what() << "\n";
+    fmt::print(fmt::fg(fmt::color::red) | fmt::emphasis::bold | fmt::emphasis::italic, "{}\n", ex.what());
   }
-  
   return 0;
 }

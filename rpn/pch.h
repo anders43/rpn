@@ -9,6 +9,7 @@
 #ifndef PCH_H
 #define PCH_H
 
-// TODO: add headers that you want to pre-compile here
+#include "fmt/core.h"
+#include "fmt/color.h"
 
 #endif //PCH_H
